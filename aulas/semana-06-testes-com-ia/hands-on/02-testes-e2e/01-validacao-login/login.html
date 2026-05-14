@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+</head>
+<body>
+  <h1>Login</h1>
+
+  <input id="email" type="email" placeholder="Email" />
+  <input id="senha" type="password" placeholder="Senha" />
+
+  <button id="btn-login">Entrar</button>
+
+  <p id="mensagem"></p>
+
+  <script>
+    document.getElementById("btn-login").addEventListener("click", function () {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+
+      if (email === "user@test.com" && senha === "123456") {
+        window.location.href = "dashboard.html";
+      } else {
+        document.getElementById("mensagem").innerText = "Credenciais inválidas";
+      }
+    });
+  </script>
+</body>
+</html>

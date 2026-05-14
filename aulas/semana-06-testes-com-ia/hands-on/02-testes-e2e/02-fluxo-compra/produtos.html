@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Produtos</title>
+</head>
+<body>
+  <h1>Lista de Produtos</h1>
+
+  <label for="input-busca">Buscar produto</label>
+  <input id="input-busca" type="text" placeholder="Digite o nome do produto" />
+
+  <button id="btn-buscar">Buscar</button>
+
+  <hr />
+
+  <div id="resultado-busca"></div>
+
+  <script>
+    document.getElementById("btn-buscar").addEventListener("click", function () {
+      const termoBusca = document.getElementById("input-busca").value;
+      const resultadoBusca = document.getElementById("resultado-busca");
+
+      if (termoBusca.toLowerCase() === "notebook") {
+        resultadoBusca.innerHTML = `
+          <div>
+            <h2>Notebook</h2>
+            <p>Notebook para estudos e trabalho.</p>
+            <button id="produto-notebook">Ver detalhes</button>
+          </div>
+        `;
+
+        document.getElementById("produto-notebook").addEventListener("click", function () {
+          window.location.href = "produto.html";
+        });
+      } else {
+        resultadoBusca.innerHTML = "<p>Nenhum produto encontrado.</p>";
+      }
+    });
+  </script>
+</body>
+</html>

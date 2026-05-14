@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login</title>
+</head>
+<body>
+  <h1>Área de Login</h1>
+
+  <label for="email">Email</label>
+  <input type="email" id="email" placeholder="Digite seu email" />
+
+  <br /><br />
+
+  <label for="senha">Senha</label>
+  <input type="password" id="senha" placeholder="Digite sua senha" />
+
+  <br /><br />
+
+  <button id="btn-login">Entrar</button>
+
+  <p id="mensagem"></p>
+
+  <script>
+    const botaoLogin = document.getElementById("btn-login");
+
+    botaoLogin.addEventListener("click", function () {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      const mensagem = document.getElementById("mensagem");
+
+      if (email === "user@test.com" && senha === "123456") {
+        window.location.href = "dashboard.html";
+      } else {
+        mensagem.innerText = "Credenciais inválidas";
+      }
+    });
+  </script>
+</body>
+</html>
