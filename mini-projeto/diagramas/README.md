@@ -13,23 +13,19 @@ Esta pasta contem orientacoes e exemplos para os diagramas do mini-projeto.
 
 ## Quando usar UML
 
-Use UML quando precisar documentar:
-
-- Casos de uso (atores e funcionalidades).
-- Sequencia de interacoes entre componentes.
-- Estrutura de classes ou entidades.
+Use UML quando precisar documentar casos de uso, sequencia de interacoes ou estrutura de entidades.
 
 ## Quando usar C4
 
-Use C4 quando precisar documentar a arquitetura do sistema em diferentes niveis de detalhe:
+Use C4 para documentar a arquitetura em niveis:
 
-- Nivel 1 (Context): o sistema e seus usuarios e sistemas externos.
-- Nivel 2 (Container): os principais componentes do sistema (frontend, backend, banco).
-- Nivel 3 (Component): os modulos internos de um container.
+- Nivel 1 (Context): o sistema, seus usuarios e sistemas externos.
+- Nivel 2 (Container): frontend, backend, banco de dados.
+- Nivel 3 (Component): modulos internos de um container.
 
 ## Salvar imagens exportadas
 
-Se voce exportar o diagrama como imagem, salve na propria pasta `diagramas/` com nome descritivo:
+Se exportar o diagrama como imagem, salve nesta pasta com nome descritivo:
 
 ```
 diagramas/
@@ -38,6 +34,6 @@ diagramas/
 └── fluxo-compra.png
 ```
 
-## Justificar decisoes arquiteturais
+## Justificar decisoes
 
-Para cada diagrama, inclua uma breve justificativa das decisoes tomadas. Exemplo: por que escolheu essa arquitetura, quais alternativas foram consideradas e por que foram descartadas.
+Para cada diagrama, inclua uma breve justificativa das decisoes tomadas: por que essa arquitetura, quais alternativas foram consideradas.

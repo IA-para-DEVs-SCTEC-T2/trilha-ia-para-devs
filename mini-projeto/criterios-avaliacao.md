@@ -32,7 +32,7 @@ Os criterios estao organizados em tres niveis progressivos. Consulte tambem o ar
 | User Stories com BDD | 3 User Stories com criterios de aceitacao |
 | Wireframe ou mockup | Minimo 5 telas geradas com prompts |
 | Estrutura de pastas | Gerada com IA e versionada |
-| GitHub Issues | Issues derivadas de requisitos funcionais e documentacao inicial |
+| GitHub Issues | Issues derivadas de requisitos e documentacao inicial |
 | `docs/PRD.md` | Visao geral, problema, objetivos, publico-alvo, regras de negocio, arquitetura inicial e User Stories |
 | `README.md` | Descricao, tecnologias, execucao, estrutura de pastas, escolhas tecnicas e fluxo de desenvolvimento |
 | Pull Request | Minimo 1 PR com template preenchido |
