@@ -1,0 +1,767 @@
+{
+  "info": {
+    "_postman_id": "483cf1f9-fe1b-4763-b7d2-c1c720427a37",
+    "name": "API de Pedidos",
+    "description": "Collection para testar a API de pedidos (Flask) rodando em http://localhost:3001",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "24320288"
+  },
+  "item": [
+    {
+      "name": "Home",
+      "item": [
+        {
+          "name": "GET / - Verifica API funcionando",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de boas-vindas presente', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.message).to.eql('API de pedidos funcionando');",
+                  "});",
+                  "",
+                  "pm.test('Endpoints listados na resposta', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.endpoints).to.have.property('produtos');",
+                  "    pm.expect(json.endpoints).to.have.property('pedido');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Produtos",
+      "item": [
+        {
+          "name": "GET /produtos - Lista todos os produtos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Retorna array de produtos', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('array');",
+                  "    pm.expect(json.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test('Produtos possuem campos obrigatórios', function () {",
+                  "    var json = pm.response.json();",
+                  "    json.forEach(function (produto) {",
+                  "        pm.expect(produto).to.have.property('id');",
+                  "        pm.expect(produto).to.have.property('nome');",
+                  "        pm.expect(produto).to.have.property('preco');",
+                  "        pm.expect(produto).to.have.property('estoque');",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('Contém 3 produtos cadastrados', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.length).to.eql(3);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/produtos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "produtos"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pedidos - Sucesso",
+      "item": [
+        {
+          "name": "POST /pedidos - Pedido válido sem cupom",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 - Pedido criado', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Pedido contém campos obrigatórios', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json).to.have.property('cliente');",
+                  "    pm.expect(json).to.have.property('produto');",
+                  "    pm.expect(json).to.have.property('quantidade');",
+                  "    pm.expect(json).to.have.property('subtotal');",
+                  "    pm.expect(json).to.have.property('desconto');",
+                  "    pm.expect(json).to.have.property('total');",
+                  "    pm.expect(json).to.have.property('status');",
+                  "});",
+                  "",
+                  "pm.test('Cliente correto no pedido', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.cliente).to.eql('João Silva');",
+                  "});",
+                  "",
+                  "pm.test('Subtotal calculado corretamente (3500 * 2 = 7000)', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.subtotal).to.eql(7000);",
+                  "});",
+                  "",
+                  "pm.test('Sem cupom: desconto deve ser 0', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.desconto).to.eql(0);",
+                  "});",
+                  "",
+                  "pm.test('Total igual ao subtotal quando sem desconto', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.total).to.eql(json.subtotal);",
+                  "});",
+                  "",
+                  "pm.test('Status do pedido é criado', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.status).to.eql('criado');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"João Silva\",\n  \"produto_id\": 1,\n  \"quantidade\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pedidos - Pedido com cupom DESCONTO10",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 - Pedido criado', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Desconto de 10% aplicado corretamente', function () {",
+                  "    var json = pm.response.json();",
+                  "    var subtotal = json.subtotal;",
+                  "    var descontoEsperado = subtotal * 0.10;",
+                  "    pm.expect(json.desconto).to.eql(descontoEsperado);",
+                  "});",
+                  "",
+                  "pm.test('Total = subtotal - desconto', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.total).to.eql(json.subtotal - json.desconto);",
+                  "});",
+                  "",
+                  "pm.test('Subtotal correto (80 * 4 = 320)', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.subtotal).to.eql(320);",
+                  "});",
+                  "",
+                  "pm.test('Total correto com 10% de desconto (320 - 32 = 288)', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.total).to.eql(288);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"Maria Souza\",\n  \"produto_id\": 2,\n  \"quantidade\": 4,\n  \"cupom\": \"DESCONTO10\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pedidos - Pedido com quantidade mínima (1 unidade)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 - Pedido criado', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Quantidade 1 aceita', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.quantidade).to.eql(1);",
+                  "});",
+                  "",
+                  "pm.test('Subtotal correto (150 * 1 = 150)', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.subtotal).to.eql(150);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"Carlos Lima\",\n  \"produto_id\": 3,\n  \"quantidade\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pedidos - Cupom inválido não aplica desconto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 - Pedido criado mesmo com cupom inválido', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Cupom inválido não gera desconto', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.desconto).to.eql(0);",
+                  "});",
+                  "",
+                  "pm.test('Total igual ao subtotal', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.total).to.eql(json.subtotal);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"Ana Paula\",\n  \"produto_id\": 2,\n  \"quantidade\": 2,\n  \"cupom\": \"CUPOMINVALIDO\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pedidos - Erros de Validação",
+      "item": [
+        {
+          "name": "POST /pedidos - Body vazio (sem JSON)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Body obrigatório', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de erro correta', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.eql('Body JSON obrigatório');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pedidos - Sem campo cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Campo cliente obrigatório', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de erro menciona campos obrigatórios', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.include('obrigatórios');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"produto_id\": 1,\n  \"quantidade\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pedidos - Sem campo produto_id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Campo produto_id obrigatório', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de erro menciona campos obrigatórios', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.include('obrigatórios');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"João Silva\",\n  \"quantidade\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pedidos - Sem campo quantidade",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Campo quantidade obrigatório', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de erro menciona campos obrigatórios', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.include('obrigatórios');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"João Silva\",\n  \"produto_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pedidos - Produto não encontrado (ID inexistente)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404 - Produto não encontrado', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de erro correta', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.eql('Produto não encontrado');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"João Silva\",\n  \"produto_id\": 999,\n  \"quantidade\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pedidos - Quantidade zero",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Quantidade inválida', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de erro sobre quantidade', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.include('Quantidade');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"João Silva\",\n  \"produto_id\": 1,\n  \"quantidade\": 0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pedidos - Quantidade negativa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Quantidade negativa inválida', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de erro sobre quantidade', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.include('Quantidade');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"João Silva\",\n  \"produto_id\": 1,\n  \"quantidade\": -3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pedidos - Quantidade como string (tipo inválido)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Tipo de quantidade inválido', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de erro sobre quantidade', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.include('Quantidade');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"João Silva\",\n  \"produto_id\": 1,\n  \"quantidade\": \"dois\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /pedidos - Estoque insuficiente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Estoque insuficiente', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de erro sobre estoque', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.eql('Estoque insuficiente');",
+                  "});",
+                  "",
+                  "pm.test('Resposta informa estoque disponível', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('estoque_disponivel');",
+                  "    pm.expect(json.estoque_disponivel).to.eql(5);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"João Silva\",\n  \"produto_id\": 1,\n  \"quantidade\": 100\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3001",
+      "type": "string"
+    }
+  ]
+}
