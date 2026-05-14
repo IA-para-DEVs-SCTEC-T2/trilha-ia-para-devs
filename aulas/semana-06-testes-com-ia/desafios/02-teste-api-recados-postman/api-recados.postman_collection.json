@@ -1,0 +1,435 @@
+{
+  "info": {
+    "name": "API de Recados",
+    "description": "Collection para testar a API de recados (Flask) rodando em http://localhost:3000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Home",
+      "item": [
+        {
+          "name": "GET / - Verifica API funcionando",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de boas-vindas presente', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.message).to.eql('API de recados funcionando');",
+                  "});",
+                  "",
+                  "pm.test('Endpoints listados na resposta', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.endpoints).to.have.property('listar_recados');",
+                  "    pm.expect(json.endpoints).to.have.property('criar_recado');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cenário 1 - POST /recados - Criar recado",
+      "item": [
+        {
+          "name": "POST /recados - Criar recado válido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"autor\": \"João Silva\",\n  \"mensagem\": \"Não esqueça da reunião às 15h\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recados",
+              "host": ["{{base_url}}"],
+              "path": ["recados"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 - Recado criado', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém campo id', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém campo autor correto', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('autor');",
+                  "    pm.expect(json.autor).to.eql('João Silva');",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém campo mensagem correto', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('mensagem');",
+                  "    pm.expect(json.mensagem).to.eql('Não esqueça da reunião às 15h');",
+                  "});",
+                  "",
+                  "pm.test('Campo lido deve ser false por padrão', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('lido');",
+                  "    pm.expect(json.lido).to.eql(false);",
+                  "});",
+                  "",
+                  "pm.globals.set('ultimo_recado_id', pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /recados - Criar segundo recado (IDs incrementais)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"autor\": \"Maria Souza\",\n  \"mensagem\": \"Relatório enviado por e-mail\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recados",
+              "host": ["{{base_url}}"],
+              "path": ["recados"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201 - Segundo recado criado', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('ID do segundo recado é maior que o primeiro', function () {",
+                  "    var json = pm.response.json();",
+                  "    var primeiroId = pm.globals.get('ultimo_recado_id');",
+                  "    pm.expect(json.id).to.be.greaterThan(Number(primeiroId));",
+                  "});",
+                  "",
+                  "pm.test('Campo lido deve ser false por padrão', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.lido).to.eql(false);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cenário 2 - GET /recados - Listar recados",
+      "item": [
+        {
+          "name": "GET /recados - Listar todos os recados",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/recados",
+              "host": ["{{base_url}}"],
+              "path": ["recados"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Retorna uma lista (array)', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Lista contém ao menos um recado', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.length).to.be.greaterThan(0);",
+                  "});",
+                  "",
+                  "pm.test('Cada recado possui os campos obrigatórios', function () {",
+                  "    var json = pm.response.json();",
+                  "    json.forEach(function (recado) {",
+                  "        pm.expect(recado).to.have.property('id');",
+                  "        pm.expect(recado).to.have.property('autor');",
+                  "        pm.expect(recado).to.have.property('mensagem');",
+                  "        pm.expect(recado).to.have.property('lido');",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('Campo id é número em todos os recados', function () {",
+                  "    var json = pm.response.json();",
+                  "    json.forEach(function (recado) {",
+                  "        pm.expect(recado.id).to.be.a('number');",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test('Campo lido é booleano em todos os recados', function () {",
+                  "    var json = pm.response.json();",
+                  "    json.forEach(function (recado) {",
+                  "        pm.expect(recado.lido).to.be.a('boolean');",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /recados - Lista vazia retorna array",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/recados",
+              "host": ["{{base_url}}"],
+              "path": ["recados"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 mesmo com lista vazia', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Resposta é sempre um array', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cenário 3 - POST /recados - Erros de validação",
+      "item": [
+        {
+          "name": "POST /recados - Erro: sem campo mensagem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"autor\": \"João Silva\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recados",
+              "host": ["{{base_url}}"],
+              "path": ["recados"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Mensagem obrigatória', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém campo error', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('error');",
+                  "});",
+                  "",
+                  "pm.test('Campo error não está vazio', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.be.a('string');",
+                  "    pm.expect(json.error.length).to.be.greaterThan(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /recados - Erro: sem campo autor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mensagem\": \"Lembrete importante\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recados",
+              "host": ["{{base_url}}"],
+              "path": ["recados"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Autor obrigatório', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém campo error', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('error');",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de erro menciona campos obrigatórios', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.include('obrigatórios');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /recados - Erro: sem autor e sem mensagem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/recados",
+              "host": ["{{base_url}}"],
+              "path": ["recados"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Campos obrigatórios ausentes', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém campo error', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('error');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /recados - Erro: body vazio (sem JSON)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{base_url}}/recados",
+              "host": ["{{base_url}}"],
+              "path": ["recados"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 - Body obrigatório', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Resposta contém campo error', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('error');",
+                  "});",
+                  "",
+                  "pm.test('Mensagem de erro: Body JSON obrigatório', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.eql('Body JSON obrigatório');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
