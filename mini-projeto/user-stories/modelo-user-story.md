@@ -1,0 +1,30 @@
+# [US-00] Titulo da User Story
+
+## User Story
+
+Como [tipo de usuario],
+quero [acao ou funcionalidade],
+para [beneficio ou objetivo].
+
+## Criterios de aceitacao
+
+Cenario 1: [Nome do cenario]
+Dado que [contexto inicial]
+Quando [acao do usuario]
+Entao [resultado esperado]
+
+Cenario 2: [Nome do cenario]
+Dado que [contexto]
+Quando [acao]
+Entao [resultado]
+
+## Checklist tecnico
+
+- [ ] [Tarefa de implementacao 1]
+- [ ] [Tarefa de implementacao 2]
+- [ ] Testes adicionados
+- [ ] Documentacao atualizada
+
+## Evidencias esperadas
+
+- [Descricao do que deve ser entregue como evidencia]

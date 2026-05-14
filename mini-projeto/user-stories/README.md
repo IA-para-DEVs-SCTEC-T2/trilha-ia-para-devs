@@ -16,7 +16,7 @@ para [beneficio ou objetivo].
 
 ## Criterios de aceitacao em BDD
 
-Os criterios de aceitacao descrevem o comportamento esperado do sistema em cenarios especificos:
+Os criterios descrevem o comportamento esperado do sistema em cenarios especificos:
 
 ```
 Dado que [contexto inicial]
@@ -36,4 +36,4 @@ Entao [resultado esperado]
 
 ## Como usar
 
-Use `modelo-user-story.md` como ponto de partida para cada User Story do seu projeto. Os exemplos do Shop4u sao apenas referencia didatica.
+Use `modelo-user-story.md` como ponto de partida para cada User Story do seu projeto. Os exemplos do Shop4u sao apenas referencia didatica, nao modelo obrigatorio.

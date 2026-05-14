@@ -1,58 +1,136 @@
 # PRD - [Nome do Projeto]
 
-## Visao geral
+## 1. Visao geral
 
-[Descricao resumida do produto em duas a tres frases.]
+[Descreva de forma objetiva o sistema ou produto que sera desenvolvido.]
 
-## Problema
+## 2. Problema
 
-[Qual problema este produto resolve? Para quem?]
+[Explique qual problema o projeto pretende resolver.]
 
-## Objetivo
+## 3. Objetivos
 
-[O que o produto deve alcancar? Qual e o resultado esperado?]
+[Liste os principais objetivos do projeto.]
 
-## Publico-alvo
+- [Objetivo 1]
+- [Objetivo 2]
+- [Objetivo 3]
 
-[Quem vai usar o produto? Descreva o perfil do usuario principal.]
+## 4. Publico-alvo
 
-## Funcionalidades principais
+[Descreva quem sao os usuarios ou perfis atendidos pelo sistema.]
 
-| Funcionalidade | Descricao |
-|----------------|-----------|
-| [Nome] | [Descricao breve] |
-| [Nome] | [Descricao breve] |
+## 5. Escopo
 
-## Requisitos funcionais
+[Liste o que faz parte da primeira versao do projeto.]
 
-- RF01: [O sistema deve...]
-- RF02: [O sistema deve...]
-- RF03: [O sistema deve...]
+- [Funcionalidade ou entrega dentro do escopo]
+- [Funcionalidade ou entrega dentro do escopo]
 
-## Requisitos nao funcionais
+## 6. Fora do escopo
 
-- RNF01: [O sistema deve... (performance, seguranca, disponibilidade)]
-- RNF02: [O sistema deve...]
+[Liste o que nao sera implementado nesta etapa.]
 
-## Regras de negocio
+- [Item fora do escopo]
+- [Item fora do escopo]
 
-- RN01: [Regra que o sistema deve respeitar]
-- RN02: [Regra que o sistema deve respeitar]
+## 7. Requisitos
 
-## Arquitetura inicial
+[Liste os principais requisitos do projeto.]
 
-[Descricao da stack tecnologica e da arquitetura proposta. Pode incluir um diagrama simples.]
+| ID | Requisito | Descricao | Prioridade | User Story relacionada |
+|----|-----------|-----------|------------|------------------------|
+| RQ01 | [Nome do requisito] | [Descricao do requisito] | Alta/Media/Baixa | [US01] |
+| RQ02 | [Nome do requisito] | [Descricao do requisito] | Alta/Media/Baixa | [US02] |
 
-- Frontend: [tecnologia]
-- Backend: [tecnologia]
-- Banco de dados: [tecnologia]
+## 8. Regras
 
-## Criterios de sucesso
+[Liste as regras que orientam o comportamento do sistema.]
 
-- [Como saberemos que o produto atingiu seu objetivo?]
-- [Metricas ou comportamentos esperados]
+| ID | Regra | Descricao | Impacto no sistema |
+|----|-------|-----------|-------------------|
+| RG01 | [Nome da regra] | [Descricao da regra] | [Impacto esperado] |
 
-## Fora do escopo
+## 9. User Stories
 
-- [O que nao sera desenvolvido nesta versao]
-- [Funcionalidades que podem ser consideradas no futuro]
+[Liste as principais User Stories do projeto.]
+
+### US01 - [Titulo da User Story]
+
+Como [tipo de usuario],
+quero [acao ou funcionalidade],
+para [beneficio ou objetivo].
+
+**Criterios de aceitacao:**
+
+Cenario 1: [Nome do cenario]
+Dado que [contexto inicial]
+Quando [acao executada]
+Entao [resultado esperado]
+
+## 10. Arquitetura
+
+[Descreva a arquitetura inicial do sistema.]
+
+Inclua, quando aplicavel:
+
+- Frontend
+- Backend
+- Banco de dados
+- APIs
+- Servicos externos
+- Componentes de IA
+- Integracoes
+
+## 11. Fluxo de funcionamento
+
+[Descreva o fluxo principal de uso do sistema.]
+
+1. O usuario acessa o sistema.
+2. O usuario realiza uma acao principal.
+3. O sistema processa a solicitacao.
+4. O sistema apresenta o resultado.
+5. O usuario conclui o fluxo.
+
+## 12. Stack
+
+[Liste as tecnologias, ferramentas, bibliotecas e frameworks utilizados.]
+
+| Camada | Tecnologia | Justificativa |
+|--------|------------|---------------|
+| Frontend | [Tecnologia] | [Justificativa] |
+| Backend | [Tecnologia] | [Justificativa] |
+| Banco de dados | [Tecnologia] | [Justificativa] |
+| IA | [Tecnologia ou ferramenta] | [Justificativa] |
+| Testes | [Tecnologia] | [Justificativa] |
+
+## 13. Organizacao do repositorio
+
+[Descreva a estrutura de pastas do projeto.]
+
+```text
+nome-do-projeto/
+├── docs/
+├── src/
+├── tests/
+├── README.md
+└── CONTRIBUTING.md
+```
+
+## 14. Uso de IA no desenvolvimento
+
+[Descreva como a IA foi ou sera utilizada no desenvolvimento. Quais tarefas, quais ferramentas.]
+
+Os prompts estao documentados em `docs/prompts.md`.
+
+## 15. Testes previstos
+
+[Quais tipos de testes serao implementados? Quais funcionalidades serao cobertas?]
+
+## 16. Proximos passos
+
+[O que sera desenvolvido nas proximas iteracoes ou versoes?]
+
+## 17. Prompts relacionados
+
+[Liste os prompts utilizados para gerar este PRD ou referencie `docs/prompts.md`.]
