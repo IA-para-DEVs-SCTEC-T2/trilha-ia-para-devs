@@ -1,73 +1,58 @@
-# Testar via terminal
-pytest test_recados.py
+# Atividade - Semana 06
 
-# Testes Postman — API de Recados
+## Objetivo
 
-Scripts prontos para colar na aba **Tests** de cada requisição no Postman.
+Criar testes automatizados com apoio de IA, cobrindo cenarios positivos, negativos, limites e edge cases.
 
----
+## O que o aluno deve produzir
 
-## Cenário 1 — `POST /recados` (sucesso)
+- Testes automatizados para o codigo base indicado no desafio.
+- Cobertura de pelo menos: cenario positivo, cenario negativo e um valor limite.
+- Evidencias de execucao dos testes (print ou log).
+- Registro dos prompts utilizados para gerar ou revisar os testes.
 
-```javascript
-pm.test("Status 201", () => {
-    pm.response.to.have.status(201);
-});
+## Como organizar a entrega
 
-pm.test("Campos obrigatórios presentes", () => {
-    const json = pm.response.json();
-    pm.expect(json).to.have.property("id");
-    pm.expect(json).to.have.property("autor");
-    pm.expect(json).to.have.property("mensagem");
-    pm.expect(json).to.have.property("lido");
-});
-
-pm.test("lido é false na criação", () => {
-    pm.expect(pm.response.json().lido).to.be.false;
-});
-
-pm.test("id é um número", () => {
-    pm.expect(pm.response.json().id).to.be.a("number");
-});
+```
+atividades/semana-06/
+└── seu-nome/
+    ├── tests/
+    │   └── test_nome_do_modulo.py
+    ├── evidencias/
+    │   └── resultado-execucao.png
+    ├── prompts-usados.md
+    └── README.md
 ```
 
----
+## Como registrar os prompts usados
 
-## Cenário 2 — `GET /recados` (listar)
+Crie um arquivo `prompts-usados.md` com:
 
-```javascript
-pm.test("Status 200", () => {
-    pm.response.to.have.status(200);
-});
+- O prompt enviado para gerar ou revisar cada teste.
+- O resultado obtido.
+- O que foi aceito, ajustado ou descartado.
+- Justificativa para as alteracoes feitas.
 
-pm.test("Resposta é uma lista", () => {
-    pm.expect(pm.response.json()).to.be.an("array");
-});
+## Como versionar no Git
 
-pm.test("Cada item tem os campos obrigatórios", () => {
-    pm.response.json().forEach(item => {
-        pm.expect(item).to.have.property("id");
-        pm.expect(item).to.have.property("autor");
-        pm.expect(item).to.have.property("mensagem");
-        pm.expect(item).to.have.property("lido");
-    });
-});
+```bash
+git checkout -b feat/atividade-semana-06-seu-nome
+git add atividades/semana-06/seu-nome/
+git commit -m "feat: adiciona testes semana 06 - seu-nome"
+git push origin feat/atividade-semana-06-seu-nome
 ```
 
----
+Abra um Pull Request apos o push.
 
-## Cenário 3 — `POST /recados` sem mensagem (erro)
+## Criterios minimos de qualidade
 
-```javascript
-pm.test("Status 400", () => {
-    pm.response.to.have.status(400);
-});
+- Testes executam sem erros.
+- Nomes de testes descritivos.
+- Cobertura de cenarios positivos e negativos.
+- Evidencias de execucao incluidas.
+- Prompts documentados com analise critica.
+- Commits com mensagens descritivas.
 
-pm.test("Campo error presente", () => {
-    pm.expect(pm.response.json()).to.have.property("error");
-});
+## Referencia
 
-pm.test("Mensagem de error não está vazia", () => {
-    pm.expect(pm.response.json().error).to.be.a("string").and.not.empty;
-});
-```
+Consulte `aulas/semana-06-testes-com-ia/desafios/` para o enunciado completo e os criterios de qualidade detalhados.
