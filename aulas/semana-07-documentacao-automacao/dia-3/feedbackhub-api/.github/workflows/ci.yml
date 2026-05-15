@@ -1,0 +1,45 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate:
+    name: Validate FeedbackHub API
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run automated tests
+        run: npm test
+
+      - name: Run build validation
+        run: npm run build
+
+      - name: Check documentation files
+        run: |
+          test -f README.md
+          test -f openapi.yaml
+          test -d docs
+          test -f docs/ARCHITECTURE.md
+          test -f docs/INSTALLATION.md
+          test -f docs/diagrams/api-flow.md
+
+      - name: Simulate deploy
+        run: echo "Deploy would run here after successful validation."

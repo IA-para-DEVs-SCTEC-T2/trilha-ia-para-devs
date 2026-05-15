@@ -1,0 +1,6 @@
+openapi: 3.0.0
+info:
+  title: FeedbackHub API
+  version: 1.0.0
+  description: API demonstrativa para coleta e gestão de feedbacks de usuários.
+paths: {}

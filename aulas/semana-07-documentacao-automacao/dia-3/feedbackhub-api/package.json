@@ -1,0 +1,29 @@
+{
+  "name": "feedbackhub-api",
+  "version": "1.0.0",
+  "description": "API demonstrativa para coleta e gestão de feedbacks de usuários.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test": "jest",
+    "build": "node -c src/app.js && node -c src/server.js"
+  },
+  "keywords": [
+    "express",
+    "api",
+    "feedback",
+    "tests",
+    "github-actions",
+    "documentation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4"
+  }
+}
