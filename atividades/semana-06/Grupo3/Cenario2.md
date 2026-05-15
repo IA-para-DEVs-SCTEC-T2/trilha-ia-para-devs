@@ -1,3 +1,26 @@
+# Prompt Usado:
+Gere scripts Post-response para o Postman usando JavaScript.
+
+Endpoint:
+GET http://localhost:3000/recados
+
+Valide:
+- status code 200
+- resposta deve ser uma lista (array)
+- todos os itens da lista devem conter os campos:
+  - id
+  - autor
+  - mensagem
+  - lido
+
+Requisitos:
+- Use pm.test()
+- Use pm.response.to.have.status()
+- Use pm.expect()
+- Gere apenas o código, sem explicações.
+
+
+# Script gerado:
 pm.test("Status code deve ser 200", function () {
     pm.response.to.have.status(200);
 });
