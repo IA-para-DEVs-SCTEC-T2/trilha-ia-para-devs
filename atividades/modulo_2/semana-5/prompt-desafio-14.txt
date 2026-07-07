@@ -1,0 +1,62 @@
+Crie um código Python didático usando LangGraph para uma demo de agente de contexto local.
+
+Objetivo:
+O usuário informa um CEP em linguagem natural e pergunta como está o clima e o que deve fazer. O sistema deve consultar o endereço, resolver a geolocalização, consultar o clima atual e gerar uma recomendação simples.
+
+Entrada de exemplo:
+"Estou no CEP 01001000. Como está o clima e o que você recomenda?"
+
+Fluxo obrigatório:
+START
+→ extrair_cep
+→ validar_cep
+→ consultar_endereco
+→ resolver_geolocalizacao
+→ consultar_clima
+→ gerar_recomendacao
+→ responder_usuario
+→ END
+
+State:
+Crie um TypedDict chamado ContextoLocalState com os campos:
+- pergunta
+- cep
+- endereco
+- geolocalizacao
+- clima
+- recomendacao
+- resposta_final
+- erro
+
+Regras:
+- extrair apenas números da pergunta;
+- identificar um CEP com 8 dígitos;
+- validar se o CEP possui exatamente 8 dígitos;
+- consultar endereço usando ViaCEP;
+- consultar latitude e longitude usando Open-Meteo Geocoding;
+- consultar clima atual usando Open-Meteo Forecast;
+- se qualquer etapa falhar, preencher o campo erro;
+- se houver erro, os próximos nodes devem retornar vazio;
+- gerar recomendação com base na temperatura:
+  - abaixo de 15°C: recomendar casaco;
+  - acima de 28°C: recomendar água e protetor solar;
+  - entre 15°C e 28°C: dizer que o clima está agradável;
+- a resposta final deve informar cidade, UF, temperatura e recomendação.
+
+Restrições:
+- Não use LLM.
+- Não use banco de dados.
+- Não crie aplicação web.
+- Não use APIs pagas.
+- Faça tudo em um único bloco de código para notebook.
+- Use urllib ou requests para chamadas HTTP.
+- Use StateGraph, START e END do LangGraph.
+
+Entregável:
+Gere o código completo com imports, state, nodes, construção do grafo, compilação e execução com estado inicial. O código deve ser implementado no campo de código logo abaixo do item 14.
+
+Critérios de aceite:
+- O código deve compilar.
+- O grafo deve conter todos os nodes do fluxo obrigatório.
+- O resultado final deve conter cep, endereco, geolocalizacao, clima, recomendacao e resposta_final.
+- A resposta final deve ser clara para o usuário.
