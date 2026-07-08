@@ -1,0 +1,130 @@
+Você é um especialista em Python, LangGraph e notebooks didáticos.
+
+Edite o arquivo:
+
+langgraph-aula-02.ipynb
+
+O desafio está no tópico dos Slides 42 e 43.
+
+Crie uma solução simples para o desafio:
+
+“Agente com recuperação textual em SQLite”
+
+Objetivo:
+Criar um agente com LangGraph que recupere memórias textuais salvas em SQLite, selecione apenas as memórias relevantes para a pergunta atual e responda usando LLM.
+
+Contexto do desafio:
+Um aluno pergunta:
+
+"Tenho prova de Python no fim de semana. Como devo organizar meus estudos?"
+
+O agente possui memórias salvas sobre esse aluno:
+
+- linguagem_preferida = Python
+- estilo_resposta = passo a passo
+- dificuldade = laços for e while
+- tempo_disponivel = 2 horas por dia
+- assunto_irrelevante = estudando Docker
+
+O agente deve usar as memórias relevantes para responder à pergunta sobre a prova de Python.
+
+A memória sobre Docker deve ser ignorada, pois não é relevante para essa pergunta.
+
+Regras:
+- usar SQLite para salvar e recuperar memórias;
+- usar LangGraph;
+- usar TypedDict para o state;
+- usar o objeto llm já existente no notebook;
+- usar SystemMessage e HumanMessage;
+- não usar Gradio;
+- não usar base vetorial;
+- não usar FAISS, Chroma, Qdrant ou embeddings;
+- manter o código simples e didático;
+- criar o código na célula logo abaixo do Markdown dos Slides 45 e 46.
+
+Crie o banco SQLite:
+
+data/estudos_desafio.sqlite
+
+Tabela:
+
+student_memories
+
+Colunas:
+- student_id
+- key
+- value
+
+Crie estas funções auxiliares:
+
+- init_db()
+- save_memory(student_id, key, value)
+- get_memories(student_id)
+
+Crie o state:
+
+class StudentStudyState(TypedDict):
+    student_id: str
+    question: str
+    candidate_memories: list[str]
+    selected_memories: list[str]
+    final_prompt: str | None
+    final_answer: str | None
+    debug_steps: list[str]
+
+Crie 4 nodes:
+
+1. recuperar_memorias
+- buscar todas as memórias do aluno no SQLite;
+- salvar em candidate_memories;
+- adicionar uma mensagem em debug_steps.
+
+2. selecionar_contexto
+- usar LLM para escolher apenas as memórias relevantes para a pergunta;
+- ignorar a memória sobre Docker;
+- responder somente com JSON neste formato:
+{"selected_memories": ["..."]}
+- salvar em selected_memories;
+- adicionar uma mensagem em debug_steps.
+
+3. montar_prompt
+- montar o prompt final com:
+  - pergunta do aluno;
+  - memórias selecionadas;
+  - instrução para responder de forma didática, objetiva e passo a passo;
+- salvar em final_prompt;
+- adicionar uma mensagem em debug_steps.
+
+4. responder
+- usar LLM para responder com base apenas no final_prompt;
+- salvar em final_answer;
+- adicionar uma mensagem em debug_steps.
+
+Fluxo do LangGraph:
+
+START -> recuperar_memorias -> selecionar_contexto -> montar_prompt -> responder -> END
+
+Execute o grafo com:
+
+student_id = "aluno-demo"
+
+question = "Tenho prova de Python no fim de semana. Como devo organizar meus estudos?"
+
+No final, imprima:
+
+- memórias candidatas;
+- memórias selecionadas;
+- prompt final;
+- resposta final;
+- debug_steps.
+
+A resposta final deve orientar o aluno a:
+- estudar Python em blocos;
+- priorizar laços for e while;
+- usar exemplos práticos;
+- seguir um passo a passo;
+- aproveitar as 2 horas por dia;
+- revisar antes da prova.
+
+Critério principal:
+O código deve deixar claro que recuperar memória não significa usar tudo. O agente deve recuperar as memórias candidatas, filtrar apenas as úteis e responder com base no contexto selecionado.
