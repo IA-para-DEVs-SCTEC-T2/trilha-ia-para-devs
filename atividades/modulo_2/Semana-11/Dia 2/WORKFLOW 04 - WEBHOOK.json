@@ -1,0 +1,746 @@
+{
+  "name": "WORKFLOW 04 - WEBHOOK",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "explore-event",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "62c9e6b4-1f9a-4e51-b03d-5aed76de9921",
+      "name": "Webhook",
+      "webhookId": "0829b54f-509c-4ac3-8ba8-48cbcddf6bdc"
+    },
+    {
+      "parameters": {
+        "content": "APLICAÇÃO → WEBHOOK → NORMALIZAÇÃO → FILTER → API + MERGE → CODE → IA → STRUCTURED OUTPUT → IF → SWITCH → AÇÃO",
+        "height": 80,
+        "width": 1360
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        80,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "f01fd59b-2d2e-4cb0-b577-c39ce827640b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0f1eb6bf-b97f-4c81-9764-9c83c7e5c254",
+              "name": "id",
+              "value": "={{ $json.body.eventId }}",
+              "type": "string"
+            },
+            {
+              "id": "867a8168-1585-496a-9623-057c97a03751",
+              "name": "eventType",
+              "value": "={{ $json.body.eventType }}",
+              "type": "string"
+            },
+            {
+              "id": "ed8a941e-eb8a-472a-af94-07b74773d950",
+              "name": "source",
+              "value": "={{ $json.body.source }}",
+              "type": "string"
+            },
+            {
+              "id": "e41710e8-a7f3-4f7a-b903-e117531f238b",
+              "name": "message",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "497e77c7-35fc-48c3-b058-06b4df7b527a",
+              "name": "retries",
+              "value": "={{ $json.body.retries }}",
+              "type": "number"
+            },
+            {
+              "id": "427ccdca-74c5-4124-bda0-bdca1ceff891",
+              "name": "impact",
+              "value": "={{ $json.body.impact }}",
+              "type": "number"
+            },
+            {
+              "id": "a2cc8878-0c21-491d-a698-f00807fb045c",
+              "name": "userId",
+              "value": "={{ $json.body.userId }}",
+              "type": "number"
+            },
+            {
+              "id": "d11e887c-c74e-4dd8-bc31-c8841f1f8c1f",
+              "name": "component",
+              "value": "={{ $json.body.component }}",
+              "type": "string"
+            },
+            {
+              "id": "f823126a-79e2-4cea-b538-7de047341b2f",
+              "name": "environment",
+              "value": "={{ $json.body.environment }}",
+              "type": "string"
+            },
+            {
+              "id": "71192b0f-1d0a-4dde-a43b-824bf88a2012",
+              "name": "status",
+              "value": "pending_analysis",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "e69cbcb9-b806-4c01-a824-fcf0224e8d4c",
+      "name": "Normalizar"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d8acc746-1498-4b70-b696-ced2d5d9e2a6",
+              "leftValue": "={{ $json.environment }}",
+              "rightValue": "=production",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "62adc72a-51c4-4dc1-a35b-9535e89ab26f",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c7eaf119-9543-419f-a123-48c9e8edabf1",
+              "leftValue": "={{ $json.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "58046cb3-769b-4185-957e-a98dc7eebb41",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        800,
+        16
+      ],
+      "id": "5fb35169-1b71-4ad7-989d-71178023d99f",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "url": "=https://jsonplaceholder.typicode.com/users/{{ $json.userId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        608,
+        176
+      ],
+      "id": "02daf104-a6dc-467a-ab7d-f56f05544d39",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const impact = Number($json.impact ?? 0);\nconst retries = Number($json.retries ?? 0);\n\nconst riskScore = Math.min(10, impact * 2 + retries);\nconst deterministicLevel =\n  riskScore >= 8 ? \"high\" :\n  riskScore >= 5 ? \"medium\" : \"low\";\n\nreturn [{\n  json: {\n    ...$json,\n    riskScore,\n    deterministicLevel\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        992,
+        16
+      ],
+      "id": "15339d80-8318-4799-9103-c5a2e2172a6b",
+      "name": "Calculate Risk Score"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analise o evento abaixo.\n\nObjetivos:\n1. classificar o tipo de problema;\n2. definir severity como low, medium ou high;\n3. atribuir confidence entre 0 e 1;\n4. resumir a situação;\n5. recomendar a próxima ação;\n6. informar se precisa de revisão humana.\n\nEVENTO:\n{{ JSON.stringify($json) }}\n\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Você atua como classificador dentro de um workflow automatizado.\nVocê não executa ações e não deve inventar fatos.\n\n\nRegras:\n- Use apenas o contexto recebido.\n- Não declare causa raiz como confirmada sem evidência.\n- Se faltarem dados importantes, reduza a confiança e sinalize revisão humana."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1216,
+        16
+      ],
+      "id": "e6f0dd98-23bb-4048-974e-76302d1be25e",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1216,
+        208
+      ],
+      "id": "160c12da-410a-4401-b70d-9bcd0ecedcca",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "wqrSzuWWe9jUYrK8",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"category\": \"integration_issue\",\n  \"severity\": \"high\",\n  \"confidence\": 0.91,\n  \"summary\": \"Falha recorrente na sincronização de pagamento.\",\n  \"recommendedAction\": \"investigate_integration\",\n  \"needsHumanReview\": false\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1360,
+        224
+      ],
+      "id": "79764f0f-c42a-4d4f-a79e-dd8794006e31",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ec53c33e-aadd-4b86-9326-b45ea689438c",
+              "leftValue": "={{ $json.output.confidence }}",
+              "rightValue": 0.7,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1632,
+        16
+      ],
+      "id": "a87672f9-2561-45d5-bf67-5bed6d956125",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c938ed24-39f8-4217-bb8f-09c191efd3f7",
+              "name": "route",
+              "value": "={{ $json.output.needsHumanReview }}",
+              "type": "boolean"
+            },
+            {
+              "id": "0587a3fe-2f4e-4bd6-b119-4c3018e36497",
+              "name": "status",
+              "value": "manual_review_required",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1840,
+        -112
+      ],
+      "id": "06f09911-a65e-4bb2-b02b-9d8980602bf6",
+      "name": "Output (True)"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.severity }}",
+                    "rightValue": "low",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4cc61f4e-1a2e-4cda-8d69-70a25b39ddda"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LOW"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c31c606b-5f73-400a-9b22-e7b97cefbb9d",
+                    "leftValue": "={{ $json.output.severity }}",
+                    "rightValue": "medium",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "MEDIUM"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0a77ad56-9e63-429d-b5fa-cc99d78a1f86",
+                    "leftValue": "={{ $json.output.severity }}",
+                    "rightValue": "high",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HIGH"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1840,
+        96
+      ],
+      "id": "53f761e6-76f8-4820-8856-caa7361e83d0",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f8d0d586-8850-45e4-906b-d21e2691e9b2",
+              "name": "action",
+              "value": "log_only",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2272,
+        -80
+      ],
+      "id": "cc08bb67-db5d-41ee-b349-cc643871d702",
+      "name": "LOW - Log Only"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2048,
+        112
+      ],
+      "id": "ed4425e1-6c24-4ac5-a898-42647cfaf878",
+      "name": "Wait",
+      "webhookId": "c457d9d9-7cda-4b49-b35c-7c3e2f2f23e3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5ba22877-478b-418c-a1ff-384549aa0fd9",
+              "name": "action",
+              "value": "follow_up",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2336,
+        112
+      ],
+      "id": "f1a147ba-10c0-47de-80e2-7d73d2a5bb1e",
+      "name": "MEDIUM - wait"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => ({\n  json: {\n    ...item.json,\n    output: {\n      ...item.json.output,\n      severity: \"high\",\n      confidence: 0.9\n    }\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        16
+      ],
+      "id": "71f2512e-90a2-46eb-88a1-fd3f93f7a8ff",
+      "name": "Code in JavaScript",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://postman-echo.com/post",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "eventId",
+              "value": "={{ $('Normalizar').item.json.id }}"
+            },
+            {
+              "name": "severity",
+              "value": "={{ $json.output.severity }}"
+            },
+            {
+              "name": "confidence",
+              "value": "={{ $json.output.confidence }}"
+            },
+            {
+              "name": "recommendedAction",
+              "value": "={{ $json.output.recommendedAction }}"
+            },
+            {
+              "name": "status",
+              "value": "automation_action_requested"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2256,
+        320
+      ],
+      "id": "b552ef7c-771f-4911-9382-616e58ed8da5",
+      "name": "HIGH - HTTP"
+    }
+  ],
+  "pinData": {
+    "Basic LLM Chain": [
+      {
+        "json": {
+          "output": {
+            "category": "integration_failure - payment-sync",
+            "severity": "medium",
+            "confidence": 0.6,
+            "summary": "Falha na sincronização da confirmação de pagamento pelo componente 'payment-sync' do serviço 'checkout-api' em production. Foram realizadas três tentativas e todas falharam; evento está com status 'pending_analysis'. Impacto reportado: 4; riskScore: 10; deterministicLevel: high. Não há detalhes de erro, códigos, volume de transações afetadas ou logs anexos — causa raiz não confirmada com os dados fornecidos.",
+            "recommendedAction": "Coletar imediatamente logs e traces das três tentativas no payment-sync (incluindo timestamps e payloads), verificar filas/mensageria e dependências externas (gateway de pagamentos ou APIs integradas), checar saúde/latência do(s) serviço(s) externo(s) e métricas de erro; identificar e isolar transações não confirmadas; reprocessar ou retentar sincronizações com controle (backoff/limite) após confirmação das causas; notificar/escalonar para o time de pagamentos e operações; ativar monitoramento e alertas adicionais para detecção de novos incidentes. Se dados de auditoria faltarem, realizar reconciliação manual das transações potencialmente afetadas.",
+            "needsHumanReview": true
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Calculate Risk Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Risk Score": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Output (True)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "LOW - Log Only",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HIGH - HTTP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "MEDIUM - wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "b0bda2b0-4ff6-4a33-9fe4-b175c4a4f944",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0ade2c54ffc0281359fef3a02962ddf21c681b7eddf9edce9a038e985c974b16"
+  },
+  "nodeGroups": [],
+  "id": "DT22XMITtnPhV2sb",
+  "tags": []
+}
