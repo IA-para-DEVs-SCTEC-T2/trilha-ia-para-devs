@@ -1,0 +1,52 @@
+services:
+  n8n:
+    build:
+      context: .
+      dockerfile: Dockerfile.n8n
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE:-America/Sao_Paulo}
+      - TZ=${TZ:-America/Sao_Paulo}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      # Somente para laboratório local em HTTP. Não reproduza em produção sem avaliar TLS/cookies.
+      - N8N_SECURE_COOKIE=false
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - agentic-lab
+
+  flowise:
+    build:
+      context: .
+      dockerfile: Dockerfile.flowise
+    container_name: flowise
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - PORT=3000
+      - APP_URL=http://localhost:3001
+      - DATABASE_PATH=/home/node/.flowise
+      - LOG_PATH=/home/node/.flowise/logs
+      - SECRETKEY_PATH=/home/node/.flowise
+      - BLOB_STORAGE_PATH=/home/node/.flowise/storage
+      - DISABLE_FLOWISE_TELEMETRY=true
+    volumes:
+      - flowise_data:/home/node/.flowise
+    networks:
+      - agentic-lab
+
+volumes:
+  n8n_data:
+  flowise_data:
+
+networks:
+  agentic-lab:
+    external: true
