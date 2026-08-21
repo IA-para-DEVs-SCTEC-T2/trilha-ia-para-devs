@@ -1,0 +1,887 @@
+{
+  "name": "[DIA 3] WORFLOW 02 - FUNDAMENTOS_AULA",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agentic-incident",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        160
+      ],
+      "id": "8bcb1585-506a-4734-a776-b6d6cc6b6dab",
+      "name": "Webhook",
+      "webhookId": "0829b54f-509c-4ac3-8ba8-48cbcddf6bdc"
+    },
+    {
+      "parameters": {
+        "content": "APLICAÇÃO → WEBHOOK → NORMALIZAÇÃO → FILTER → API + MERGE → CODE → IA → STRUCTURED OUTPUT → IF → SWITCH → AÇÃO",
+        "height": 80,
+        "width": 1184
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "b5306b5e-cb03-48fe-8621-9d1135afe9ca",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0f1eb6bf-b97f-4c81-9764-9c83c7e5c254",
+              "name": "id",
+              "value": "={{ $json.body.eventId }}",
+              "type": "string"
+            },
+            {
+              "id": "867a8168-1585-496a-9623-057c97a03751",
+              "name": "eventType",
+              "value": "={{ $json.body.eventType }}",
+              "type": "string"
+            },
+            {
+              "id": "ed8a941e-eb8a-472a-af94-07b74773d950",
+              "name": "source",
+              "value": "={{ $json.body.source }}",
+              "type": "string"
+            },
+            {
+              "id": "e41710e8-a7f3-4f7a-b903-e117531f238b",
+              "name": "content",
+              "value": "={{ $json.body.message }}",
+              "type": "string"
+            },
+            {
+              "id": "497e77c7-35fc-48c3-b058-06b4df7b527a",
+              "name": "retries",
+              "value": "={{ $json.body.retries }}",
+              "type": "number"
+            },
+            {
+              "id": "427ccdca-74c5-4124-bda0-bdca1ceff891",
+              "name": "impact",
+              "value": "={{ $json.body.impact }}",
+              "type": "number"
+            },
+            {
+              "id": "a2cc8878-0c21-491d-a698-f00807fb045c",
+              "name": "userId",
+              "value": "={{ $json.body.userId }}",
+              "type": "number"
+            },
+            {
+              "id": "d11e887c-c74e-4dd8-bc31-c8841f1f8c1f",
+              "name": "component",
+              "value": "={{ $json.body.component }}",
+              "type": "string"
+            },
+            {
+              "id": "f823126a-79e2-4cea-b538-7de047341b2f",
+              "name": "environment",
+              "value": "={{ $json.body.environment }}",
+              "type": "string"
+            },
+            {
+              "id": "71192b0f-1d0a-4dde-a43b-824bf88a2012",
+              "name": "status",
+              "value": "pending_agent_analysis",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        144,
+        160
+      ],
+      "id": "2b7fe814-b13a-45dc-b196-4077f59d30f8",
+      "name": "Normalizar"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d8acc746-1498-4b70-b696-ced2d5d9e2a6",
+              "leftValue": "={{ $json.environment }}",
+              "rightValue": "=production",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "62adc72a-51c4-4dc1-a35b-9535e89ab26f",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "c7eaf119-9543-419f-a123-48c9e8edabf1",
+              "leftValue": "={{ $json.content }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        368,
+        160
+      ],
+      "id": "2560a07d-1b97-42e9-9f7a-d1a356791b57",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "jsCode": "const impact = Number($json.impact ?? 0);\nconst retries = Number($json.retries ?? 0);\n\nconst riskScore = Math.min(10, impact * 2 + retries);\nconst deterministicLevel =\n  riskScore >= 8 ? \"high\" :\n  riskScore >= 5 ? \"medium\" : \"low\";\n\nreturn [{\n  json: {\n    ...$json,\n    riskScore,\n    deterministicLevel\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        160
+      ],
+      "id": "fbd69743-69aa-4330-bdca-b2f9741bb601",
+      "name": "Calculate Risk Score"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        720,
+        416
+      ],
+      "id": "2f773fde-2622-439b-b824-8407025e3d02",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ub591nolf0K3W5Bi",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ec53c33e-aadd-4b86-9326-b45ea689438c",
+              "leftValue": "={{ $('Calculate Risk Score').item.json.riskScore }}",
+              "rightValue": 9,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1632,
+        96
+      ],
+      "id": "6c4a5b63-bbf5-4e46-aca0-ec13d7d11213",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "922002ae-13f5-4a7a-8a9e-edc17e0c5efa",
+                    "leftValue": "={{ $('Calculate Risk Score').item.json.deterministicLevel }}",
+                    "rightValue": "low",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "LOW"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c31c606b-5f73-400a-9b22-e7b97cefbb9d",
+                    "leftValue": "={{ $('Calculate Risk Score').item.json.deterministicLevel }}",
+                    "rightValue": "medium",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "MEDIUM"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0a77ad56-9e63-429d-b5fa-cc99d78a1f86",
+                    "leftValue": "={{ $('Calculate Risk Score').item.json.deterministicLevel }}",
+                    "rightValue": "high",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HIGH"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1840,
+        224
+      ],
+      "id": "085cccc9-9c71-4155-a059-75b806492283",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f8d0d586-8850-45e4-906b-d21e2691e9b2",
+              "name": "action",
+              "value": "log_only",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2624,
+        80
+      ],
+      "id": "05a4cc0f-8a9b-4ce1-bbca-bed8d5e9429c",
+      "name": "LOW - Log Only"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2368,
+        256
+      ],
+      "id": "2a545ee8-ae5a-4193-8b23-3450771c6d82",
+      "name": "Wait",
+      "webhookId": "c457d9d9-7cda-4b49-b35c-7c3e2f2f23e3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5ba22877-478b-418c-a1ff-384549aa0fd9",
+              "name": "action",
+              "value": "follow_up",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2656,
+        256
+      ],
+      "id": "f19f7b93-cc3d-4ff7-823a-e1f500c0b747",
+      "name": "MEDIUM - wait"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => ({\n  json: {\n    ...item.json,\n    output: {\n      ...item.json.output,\n      severity: \"high\",\n      confidence: 0.9\n    }\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        816
+      ],
+      "id": "6d0136f1-ce22-41a7-a164-0d50edf5dc1b",
+      "name": "Code in JavaScript",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analise o evento abaixo e decida quais informações adicionais precisa consultar antes de responder.\n\nEVENTO:\n{{ JSON.stringify($json) }}",
+        "options": {
+          "systemMessage": "=Você é um agente de triagem técnica dentro de um workflow controlado.\n\nSeu papel é interpretar evidências e recomendar o próximo passo. Você NÃO executa ações corretivas.\n\nRegras:\n- use apenas o contexto recebido, a memória da sessão e os resultados das tools;\n- trate os dados do evento atual como a fonte prioritária da execução;\n- use a memória apenas como histórico complementar;\n- nunca substitua dados do evento atual por dados recuperados da memória;\n- quando utilizar informação histórica, deixe claro que ela pertence a uma interação anterior;\n- a Session Key é gerenciada pelo workflow; não solicite sessionId apenas para consultar a memória;\n- se não houver histórico recuperado para a sessão atual, informe que não há informação anterior disponível;\n- não invente fatos, owners, runbooks ou causas;\n- não declare causa raiz como confirmada sem evidência suficiente;\n- para qualquer evento com deterministicLevel = high, consulte obrigatoriamente a tool de runbook antes da resposta final;\n- não peça autorização para consultar a tool de runbook;\n- se não existir runbook específico, informe o resultado retornado pela própria tool;\n- consulte a tool de owner quando ownership, contato ou encaminhamento forem relevantes;\n- se faltar contexto, explicite a incerteza;\n- nunca recomende deploy, exclusão de dados, restart automático ou alteração irreversível;\n- diferencie evidência, hipótese e recomendação.\n\nNa seção \"tools utilizadas\":\n- use apenas os nomes funcionais das tools;\n- escreva \"Consultar Owner\" e \"Consultar Runbook\";\n- não exponha identificadores internos do n8n.\n\nResponda com:\n1. resumo;\n2. evidências;\n3. tools utilizadas;\n4. hipóteses;\n5. recomendação;\n6. pontos que exigem revisão humana."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        832,
+        160
+      ],
+      "id": "1897e1ba-1927-4de8-b197-78042be9a1f7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "description": "Use quando precisar identificar o responsável do userId informado no evento.",
+        "workflowId": {
+          "__rl": true,
+          "value": "PVsi1V0U1RakGMsJ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/PVsi1V0U1RakGMsJ",
+          "cachedResultName": "Tool 03A - Consultar Owner_AULA"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "userId": "={{ $json.userId }}"
+          },
+          "matchingColumns": [
+            "userId"
+          ],
+          "schema": [
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        992,
+        464
+      ],
+      "id": "59fc19fe-297a-4ac3-ba4e-08f454421613",
+      "name": "Call 'Tool 03A - Consultar Owner_AULA'"
+    },
+    {
+      "parameters": {
+        "description": "Use para consultar procedimentos e limites do componente antes de recomendar investigação ou mitigação.",
+        "workflowId": {
+          "__rl": true,
+          "value": "Q35TU7cHzuIzUuR5",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Q35TU7cHzuIzUuR5",
+          "cachedResultName": "Tool 03B - Consultar Runbook_AULA"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "component": "={{ $json.component }}"
+          },
+          "matchingColumns": [
+            "component"
+          ],
+          "schema": [
+            {
+              "id": "component",
+              "displayName": "component",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        464
+      ],
+      "id": "a8c9593b-cf2c-448c-8db2-dac2463fd8a9",
+      "name": "Call 'Tool 03B - Consultar Runbook_AULA'"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.component }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        864,
+        400
+      ],
+      "id": "52a7afd3-0bc4-402d-a0f0-0aad8d8535c4",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output }}",
+        "guardrails": {
+          "custom": {
+            "guardrail": [
+              {
+                "name": "Ação operacional proibida",
+                "threshold": 0.7,
+                "prompt": "=Analise o texto produzido por um agente de triagem operacional.\n\nConsidere violação somente quando o texto recomendar, autorizar ou instruir a execução de uma ação corretiva automática sensível, como:\n\n- executar deploy;\n- reiniciar serviço automaticamente;\n- apagar dados;\n- alterar infraestrutura;\n- modificar configurações críticas;\n- executar outra ação irreversível;\n\nsem exigir aprovação humana.\n\nNÃO considere violação quando essas ações forem apenas mencionadas como proibidas, como exemplos de risco ou como ações que exigem aprovação humana."
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.guardrails",
+      "typeVersion": 2,
+      "position": [
+        1264,
+        160
+      ],
+      "id": "71a408cf-3f8a-4adf-a0e2-1acb1e47a7be",
+      "name": "Guardrails"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1280,
+        368
+      ],
+      "id": "575cc1e4-e00d-4720-9e64-85e6672f964b",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ub591nolf0K3W5Bi",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "aeed4cc0-d6d7-4f96-ba92-3f98302dab50",
+              "name": "action",
+              "value": "blocked",
+              "type": "string"
+            },
+            {
+              "id": "d40091c8-3bde-47a1-a304-ea093139be15",
+              "name": "status",
+              "value": "awaiting_human_review",
+              "type": "string"
+            },
+            {
+              "id": "1275165c-5727-4d8a-bf00-3b55f6a88a83",
+              "name": "reviewRequired",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "8fc94988-c87e-4674-86cb-059cf81a49ea",
+              "name": "reviewReason",
+              "value": "output_guardrail_violation",
+              "type": "string"
+            },
+            {
+              "id": "901d4786-e555-4cff-9827-6e00e005059e",
+              "name": "guardrailLayer",
+              "value": "semantic_output",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1600,
+        352
+      ],
+      "id": "d9713536-ed0b-446f-a811-94f9ee61ef83",
+      "name": "Bloqueado pelo GuardRail"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://flowise:3000/api/v1/prediction/b4fd6bf6-879a-490b-b1c5-fdc3afc44681",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "question",
+              "value": "={{ 'Faça uma segunda análise deste incidente. Destaque evidências, hipóteses, recomendação e incertezas. CONTEXTO: ' + JSON.stringify($('Calculate Risk Score').first().json) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2176,
+        -64
+      ],
+      "id": "ce211ae4-e54f-4342-b614-196895f6ac43",
+      "name": "Flowise Specialist Review"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"eventId\": {{ JSON.stringify($('Calculate Risk Score').first().json.id) }},\n  \"component\": {{ JSON.stringify($('Calculate Risk Score').first().json.component) }},\n  \"environment\": {{ JSON.stringify($('Calculate Risk Score').first().json.environment) }},\n  \"riskScore\": {{ Number($('Calculate Risk Score').first().json.riskScore) }},\n  \"deterministicLevel\": {{ JSON.stringify($('Calculate Risk Score').first().json.deterministicLevel) }},\n  \"userId\": {{ Number($('Calculate Risk Score').first().json.userId) }},\n  \"content\": {{ JSON.stringify($('Calculate Risk Score').first().json.content) }},\n  \"specialistAnalysis\": {{ JSON.stringify($('Flowise Specialist Review').first().json.text) }},\n  \"specialistRoute\": {{ JSON.stringify($('Flowise Specialist Review').first().json.agentFlowExecutedData.slice(-1)[0].nodeLabel) }},\n  \"flowiseExecutionId\": {{ JSON.stringify($('Flowise Specialist Review').first().json.executionId) }},\n  \"flowiseChatId\": {{ JSON.stringify($('Flowise Specialist Review').first().json.chatId) }},\n  \"action\": \"human_review_required\",\n  \"status\": \"awaiting_human_review\",\n  \"reviewRequired\": true,\n  \"reviewReason\": \"high_risk_policy\"\n}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2400,
+        -64
+      ],
+      "id": "0ee63178-8c51-4a53-b8f8-523398a008aa",
+      "name": "Preparar Revisão Humana"
+    }
+  ],
+  "pinData": {
+    "AI Agent": [
+      {
+        "json": {
+          "output": "1) Resumo\n- Evento EVT-AG-003: integration_failure no componente inventory-sync em produção. retries=2, impact=3, riskScore=8, deterministicLevel=high, status pendente de análise do agente. É necessária coleta adicional de evidências antes de conclusão. Consultei runbook obrigatório e dados de owner.\n\n2) Evidências (do evento + resultado das ferramentas)\n- Evento recebido: {\"id\":\"EVT-AG-003\",\"eventType\":\"integration_failure\",\"source\":\"inventory-api\",\"content\":\"Falha observada em outro componente da aplicação.\",\"retries\":2,\"impact\":3,\"userId\":1,\"component\":\"inventory-sync\",\"environment\":\"production\",\"status\":\"pending_agent_analysis\",\"riskScore\":8,\"deterministicLevel\":\"high\"}.\n- Owner identificado (consulta): Leanne Graham — Sincere@april.biz (ownerCompany: Romaguera-Crona).\n- Runbook consultado (obrigatório por deterministicLevel=high): RB-GENERIC. Resultado: allowedChecks inclui \"coletar evidências adicionais\"; forbiddenActions inclui \"ações corretivas automáticas\".\n\n3) Tools utilizadas\n- Consultar Owner\n- Consultar Runbook\n\n4) Hipóteses (a confirmar com evidências)\n- Falha no componente dependente (inventory-api ou outro serviço integrado).\n- Erro de comunicação de rede (timeout, DNS, latência).\n- Falha de autenticação/autorização (tokens expirados, credenciais).\n- Rate limiting / throttling por dependência externa.\n- Incompatibilidade de esquema ou payload (erro de validação).\n- Problema de recursos (ex.: OOM, CPU, saturação de conexões).\n- Alteração recente de configuração ou deploy que introduziu regressão.\nObservação: nenhuma hipótese está confirmada — são pontos a verificar.\n\n5) Recomendação — informações adicionais a consultar antes de qualquer conclusão ou ação\nColetar e anexar os itens abaixo (prioridade alta → baixa) conforme permitido pelo runbook RB-GENERIC (coletar evidências; evitar ações automáticas):\n\nEssenciais\n- Logs detalhados do inventory-sync no período da falha (incluindo timestamps, stack traces, mensagens de erro completas).\n- Logs do inventory-api correlacionados (mesmo período).\n- Correlation IDs / request IDs associados ao evento (para traçar a transação entre serviços).\n- Payloads de request/resposta relevantes (se possível, sem expor dados sensíveis).\n- Registros de retries (qual erro causou cada retry e códigos de erro).\n- Métricas de saúde do serviço no período: CPU, memória, threads, file descriptors, latência, erros por segundo.\n- Estado das dependências críticas (bancos, filas/mensageria, serviços externos) no período da falha.\n- Status de circuit breakers / rate limiters e métricas de throttling.\n\nImportantes\n- Histórico de deploys/rollbacks/config changes nas últimas 24–72 horas para inventory-sync e inventory-api.\n- Alertas e dashboards correlacionados (APM, Prometheus, Grafana).\n- Eventos de rede (ex.: perda de conectividade, DNS) e logs de balanceadores/proxies.\n- Logs de autenticação/autorização se a integração usa tokens/ACLs.\n- Tamanho de backlog/filas e latência de processamento, se aplicável.\n\nOperacionais / contato\n- Confirmação de owner/encaminhamento: contatar Leanne Graham (Sincere@april.biz) para contexto operacional, senhas de acesso ou histórico de mudanças recentes.\n- Identificar time responsável por dependências envolvidas (se diferente).\n\n6) Pontos que exigem revisão humana (decisões que não podem ser automatizadas pelo agente)\n- Autorizar acesso a payloads ou logs que contenham dados sensíveis (GDPR/privacidade).\n- Validar e priorizar hipóteses com base nas evidências coletadas (decidir causa provável).\n- Determinar e aprovar qualquer ação corretiva manual (restart de serviço, reprocessamento de filas, rollback), lembrando que o runbook proíbe ações corretivas automáticas.\n- Escalação para equipes de infra, rede ou segurança, se evidências apontarem para esses domínios.\n- Confirmação de impacto comercial/usuário real antes de abrir major incident ou comunicar clientes.\n\nIncertezas / observações finais\n- Não há informação adicional histórica da sessão atual além do evento; todas as recomendações baseiam-se no evento e nas consultas feitas ao owner e ao runbook.\n- Pelo runbook RB-GENERIC, a próxima ação permitida é coletar evidências; qualquer ação corretiva exige revisão humana/autorização.\n\nSe concordar, eu listo os comandos/consultas específicas (ex.: intervalos de logs, queries APM, métricas a extrair) que você deve executar ou pedir ao time responsável para reunir e anexar aqui."
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Calculate Risk Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Risk Score": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Flowise Specialist Review",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "LOW - Log Only",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Flowise Specialist Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "MEDIUM - wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        []
+      ]
+    },
+    "Call 'Tool 03A - Consultar Owner_AULA'": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Tool 03B - Consultar Runbook_AULA'": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Guardrails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Guardrails",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardrails": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bloqueado pelo GuardRail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Flowise Specialist Review": {
+      "main": [
+        [
+          {
+            "node": "Preparar Revisão Humana",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "54a22947-fc5d-4a87-b676-aaa56ee6d89f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "749bab645ed69cfd29183b9455ab2d56f60a840c3fa6b1e92c13145d4c78502e"
+  },
+  "nodeGroups": [],
+  "id": "7Lt4uQaPOYWE9LRJ",
+  "tags": []
+}

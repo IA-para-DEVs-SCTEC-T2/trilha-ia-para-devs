@@ -1,0 +1,64 @@
+{
+  "name": "Tool 03B - Consultar Runbook_AULA",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "component"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "591d1abf-f915-4307-9ad2-06867fe69b22",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "jsCode": "const component = String($json.component ?? \"unknown\");\n\nconst runbooks = {\n  \"payment-sync\": {\n    runbook: \"RB-PAY-01\",\n    allowedChecks: [\n      \"verificar logs da integração\",\n      \"comparar falhas antes e depois do último deploy\",\n      \"validar disponibilidade do serviço externo\"\n    ],\n    forbiddenActions: [\n      \"reiniciar serviço automaticamente\",\n      \"executar deploy\",\n      \"apagar dados\"\n    ]\n  },\n  \"checkout-api\": {\n    runbook: \"RB-CHK-01\",\n    allowedChecks: [\n      \"verificar taxa de erro\",\n      \"comparar latência\",\n      \"inspecionar logs recentes\"\n    ],\n    forbiddenActions: [\"rollback automático\", \"alteração de banco\"]\n  }\n};\n\nreturn [{\n  json: runbooks[component] ?? {\n    runbook: \"RB-GENERIC\",\n    allowedChecks: [\"coletar evidências adicionais\"],\n    forbiddenActions: [\"ações corretivas automáticas\"]\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "2705a6d9-6521-4b2e-b568-ad38cc9df348",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1d09a82c-6192-4f40-8ee0-7d191905a561",
+  "meta": {
+    "instanceId": "749bab645ed69cfd29183b9455ab2d56f60a840c3fa6b1e92c13145d4c78502e"
+  },
+  "nodeGroups": [],
+  "id": "Q35TU7cHzuIzUuR5",
+  "tags": []
+}

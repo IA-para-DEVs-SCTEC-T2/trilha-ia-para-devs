@@ -1,0 +1,111 @@
+{
+  "name": "Tool 03A - Consultar Owner_AULA",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "userId"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "106a4c91-be9d-4943-8c40-705f09452fa4",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "url": "=https://jsonplaceholder.typicode.com/users/{{ $json.userId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        240,
+        0
+      ],
+      "id": "97786d92-8ae7-4c96-8d1b-3a4907cc739f",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7f7aa99c-0803-4dbd-8c79-fec37bec40ee",
+              "name": "ownerName",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "9d89cba2-b455-4641-ad7f-f887ed520248",
+              "name": "ownerEmail",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "c29c3695-4f3d-4f9a-b26c-eb05d6c98672",
+              "name": "ownerCompany",
+              "value": "={{ $json.company.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "c6d1ff6d-2221-4a31-a392-3650866e1adc",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "4af0d12a-4e22-4862-92bf-5fab1469711a",
+  "meta": {
+    "instanceId": "749bab645ed69cfd29183b9455ab2d56f60a840c3fa6b1e92c13145d4c78502e"
+  },
+  "nodeGroups": [],
+  "id": "PVsi1V0U1RakGMsJ",
+  "tags": []
+}
